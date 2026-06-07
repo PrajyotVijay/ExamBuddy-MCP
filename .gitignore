@@ -1,0 +1,9 @@
+.env
+__pycache__/
+*.pyc
+storage/*.pdf
+storage/cache.json
+storage/quiz_scores.json
+storage/quiz_state.json
+venv/
+.venv/
