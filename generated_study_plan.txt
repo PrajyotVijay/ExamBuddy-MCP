@@ -1,0 +1,82 @@
+Here’s your **7-day study plan** for the "Complex Numbers - I" chapter. This plan ensures a balance between theory, numerical practice, and revision, keeping in mind exam pressure and a realistic time commitment.
+
+---
+
+### **Day 1: Fundamental Concepts and Basic Properties**
+- **Topics to Cover:**
+  1. Understanding iota (\( i = sqrt(-1) \)) and powers of \( i \).
+  2. Representing a complex number (\( z = a + ib \)).
+  3. Conjugates and equality in complex numbers.
+  4. Conjugate Complex Properties:
+     - \( z + \bar{z} = 2\mathrm{Re}(z) \), \( z - \bar{z} = 2i\mathrm{Im}(z) \),
+     - \( z\bar{z} = a^2 + b^2 \) (real).
+- **Study Approach:**
+  - **Theory:** 2 hours
+    - Understand definitions and derivations.
+    - Focus on relationship between \( z \) and \( \bar{z} \).
+  - **Numerical Practice:** 1 hour
+    - Solve exercise problems related to basic operations (addition, subtraction, multiplication) and verifying properties.
+- **Total Time:** 3 hours
+
+---
+
+### **Day 2: Modulus & Properties**
+- **Topics to Cover:**
+  1. Modulus of a complex number (\( |z| \)).
+  2. Important properties of modulus:
+     - \( |z| \geq 0 \), \( |z| \geq \mathrm{Re}(z) \), \( |z| \geq \mathrm{Im}(z) \), etc.
+     - \( |z|^2 = z \cdot \bar{z} \), triangle inequalities.
+- **Study Approach:**
+  - **Theory:** 1.5 hours
+    - Understand how the modulus represents the length of the vector.
+    - Thoroughly examine all the modulus properties.
+  - **Numerical Practice:** 1.5 hours
+    - Practice problems derived from modulus properties.
+    - Solve typical modulus comparison and triangle inequality questions.
+- **Total Time:** 3 hours
+
+---
+
+### **Day 3: Amplitude & Polar Form of Complex Numbers**
+- **Topics to Cover:**
+  1. Amplitude (\( \arg(z) \)) of complex numbers and its significance.  
+  2. Relationship between amplitude and modulus.
+  3. Conversion between rectangular and polar form \( z = r(\cos\theta + i\sin\theta) \).
+  4. Important amplitude properties.
+- **Study Approach:**
+  - **Theory:** 1.5 hours
+    - Understand how amplitude provides the angle of the complex number vector.
+    - Explore polar representation and its benefits (e.g., trigonometric multiplication rules).
+  - **Numerical Practice:** 1.5 hours
+    - Practice converting between rectangular and polar forms.
+    - Solve amplitude problems and verify amplitude properties.
+- **Total Time:** 3 hours
+
+---
+
+### **Day 4: De Moivre’s Theorem and Cube Roots of Unity**
+- **Topics to Cover:**
+  1. **De Moivre’s Theorem** with integer and rational powers.
+  2. Application of De Moivre’s Theorem to problems involving powers and roots.
+  3. **Cube roots of unity**:
+     - \( 1, \omega = -\frac{1}{2} + i\frac{\sqrt{3}}{2}, \omega^2 = -\frac{1}{2} - i\frac{\sqrt{3}}{2} \).
+     - Properties: \( 1 + \omega + \omega^2 = 0 \), \( x^2 + x + 1 = 0 \).
+- **Study Approach:**
+  - **Theory:** 2 hours
+    - Derive and understand De Moivre’s formula (case I and case II).
+    - Learn the properties of cube roots of unity.
+  - **Numerical Practice:** 2 hours
+    - Solve problems involving De Moivre’s Theorem for powers and roots.
+    - Work on properties of cube roots of unity (e.g., algebraic expansions).
+- **Total Time:** 4 hours
+
+---
+
+### **Day 5: Advanced Topics and Mixed Practice**
+- **Topics to Cover:**
+  1. Square root of complex numbers.
+  2. Advanced practice on modulus, amplitude, and conjugate questions.
+  3. Combined application of theorems, properties, and complex operations.
+- **Study Approach:**
+  - **Theory:** 1.5 hours
+    - Focus on
