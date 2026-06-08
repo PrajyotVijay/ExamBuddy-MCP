@@ -12,6 +12,9 @@ from tools.planner import study_plan
 from tools.quiz import quiz_me
 from tools.progress import mark_topic_done, show_progress, reset_progress
 from tools.webview import get_dashboard_data
+from tools.workiq import get_smart_recommendation
+
+mcp.tool()(get_smart_recommendation)
 mcp.tool()(get_dashboard_data)
 
 mcp.tool()(mark_topic_done)
