@@ -13,6 +13,8 @@ from tools.quiz import quiz_me
 from tools.progress import mark_topic_done, show_progress, reset_progress
 from tools.webview import get_dashboard_data
 from tools.workiq import get_smart_recommendation
+from tools.webview_panel import open_dashboard
+mcp.tool()(open_dashboard)
 
 mcp.tool()(get_smart_recommendation)
 mcp.tool()(get_dashboard_data)
