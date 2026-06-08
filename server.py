@@ -10,6 +10,11 @@ from tools.explain import explain_topic
 from tools.questions import generate_questions
 from tools.planner import study_plan
 from tools.quiz import quiz_me
+from tools.progress import mark_topic_done, show_progress, reset_progress
+
+mcp.tool()(mark_topic_done)
+mcp.tool()(show_progress)
+mcp.tool()(reset_progress)
 
 mcp.tool()(load_syllabus)
 mcp.tool()(switch_subject)
