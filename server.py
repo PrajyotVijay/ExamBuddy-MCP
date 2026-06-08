@@ -1,17 +1,19 @@
 from mcp.server.fastmcp import FastMCP
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(r"C:\Projects\ExamBuddy-MCP\.env")
 
 mcp = FastMCP("ExamBuddy")
 
-from tools.syllabus import load_syllabus
+from tools.syllabus import load_syllabus, switch_subject, list_subjects
 from tools.explain import explain_topic
 from tools.questions import generate_questions
 from tools.planner import study_plan
 from tools.quiz import quiz_me
 
 mcp.tool()(load_syllabus)
+mcp.tool()(switch_subject)
+mcp.tool()(list_subjects)
 mcp.tool()(explain_topic)
 mcp.tool()(generate_questions)
 mcp.tool()(study_plan)
