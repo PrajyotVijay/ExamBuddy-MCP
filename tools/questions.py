@@ -9,13 +9,14 @@ def generate_questions(topic: str, count: int = 5, question_type: str = "mixed")
     """Generate exam-style questions for a topic. Types: mcq, short, long, mixed."""
     client = OpenAI(
         base_url="https://models.inference.ai.azure.com",
-        api_key=os.getenv("GITHUB_TOKEN")
+        api_key=os.getenv("GITHUB_TOKEN"),
+        timeout=30.0
     )
     
     context = _load_cache().get("content", "")
     
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "You are a university exam paper setter."},
             {"role": "user", "content": f"""Generate {count} {question_type} exam questions on: {topic}

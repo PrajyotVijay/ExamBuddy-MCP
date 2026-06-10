@@ -23,7 +23,8 @@ def get_smart_recommendation() -> str:
     """Work IQ powered recommendation — analyzes your study session context, progress, and quiz performance to suggest what to study next."""
     client = OpenAI(
         base_url="https://models.inference.ai.azure.com",
-        api_key=os.getenv("GITHUB_TOKEN")
+        api_key=os.getenv("GITHUB_TOKEN"),
+        timeout=30.0
     )
 
     # Gather full workspace context — Work IQ pattern
@@ -56,7 +57,7 @@ Student workspace context (Work IQ):
     _save_context(context)
 
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "You are an intelligent study advisor with full context of the student's workspace, progress, and performance. Give specific, actionable recommendations."},
             {"role": "user", "content": f"""{workspace_summary}

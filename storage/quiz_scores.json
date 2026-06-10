@@ -1,16 +1,16 @@
 {
   "total": 2,
-  "correct": 2,
+  "correct": 0,
   "history": [
     {
-      "question": "A company is testing a new product for defects. The probability that a randomly chosen product is defective is 0.05. If a batch contains 10 products, what is the probability that exactly 2 products in the batch are defective? Assume independence between products.",
-      "your_answer": "P(X=2) = C(10,2) * (0.05)^2 * (0.95)^8 = 0.0746",
-      "verdict": "Correct"
+      "question": "A manufacturer claims that the average life of a certain type of battery is 1000 hours, with a known standard deviation of 120 hours. A sample of 36 batteries is tested, and the average life of the sample is found to be 960 hours. Using a significance level of 0.05, conduct a one-tailed Z-test to determine whether the manufacturer\u2019s claim can be rejected. State your hypotheses, calculate the Z-value, and provide the conclusion.",
+      "your_answer": "2",
+      "verdict": "Incorrect"
     },
     {
-      "question": "A company has two machines, A and B, manufacturing widgets. Machine A produces 60% of the widgets, and Machine B produces 40%. The probability that a widget produced by Machine A is defective is 3%, while the probability that a widget produced by Machine B is defective is 7%. If a randomly selected widget is found to be defective, what is the probability that it was produced by Machine A?",
-      "your_answer": "P(A|defective) = P(defective|A)*P(A) / P(defective) = (0.03*0.6) / (0.03*0.6 + 0.07*0.4) = 0.018 / 0.046 = 0.391",
-      "verdict": "Correct"
+      "question": "A researcher conducted a study on a new medication and found that it reduces symptoms in 80% of patients. If they want to test this new medication against a traditional treatment with known effectiveness of 60% using a significance level of 0.05, conduct a hypothesis test using a one-tailed z-test to determine if the new medication is statistically significantly better than the traditional treatment. Assume the sample size for both groups is 100 patients.",
+      "your_answer": "1",
+      "verdict": "Incorrect"
     }
   ]
 }

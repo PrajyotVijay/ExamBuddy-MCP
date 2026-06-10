@@ -10,8 +10,11 @@ STATE_FILE = r"C:\Projects\ExamBuddy-MCP\storage\quiz_state.json"
 
 def _load_state():
     if os.path.exists(STATE_FILE):
-        with open(STATE_FILE, "r") as f:
-            return json.load(f)
+        try:
+            with open(STATE_FILE, "r") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, ValueError):
+            return {}
     return {}
 
 def _save_state(state):
@@ -20,8 +23,11 @@ def _save_state(state):
 
 def _load_scores():
     if os.path.exists(SCORE_FILE):
-        with open(SCORE_FILE, "r") as f:
-            return json.load(f)
+        try:
+            with open(SCORE_FILE, "r") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, ValueError):
+            return {"total": 0, "correct": 0, "history": []}
     return {"total": 0, "correct": 0, "history": []}
 
 def _save_scores(scores):
@@ -32,7 +38,8 @@ def quiz_me(topic: str = "random", answer: str = "") -> str:
     """Interactive quiz — call with no answer to get a question, call with your answer to check it."""
     client = OpenAI(
         base_url="https://models.inference.ai.azure.com",
-        api_key=os.getenv("GITHUB_TOKEN")
+        api_key=os.getenv("GITHUB_TOKEN"),
+        timeout=30.0
     )
     context = _load_cache().get("content", "")
     scores = _load_scores()
@@ -40,7 +47,7 @@ def quiz_me(topic: str = "random", answer: str = "") -> str:
 
     if answer and _quiz_state.get("last_question"):
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a strict but fair university examiner. Reply in this exact format:\nVERDICT: Correct | Partially Correct | Incorrect\nEXPLANATION: <your explanation>"},
                 {"role": "user", "content": f"""Question: {_quiz_state['last_question']}
@@ -72,7 +79,7 @@ Student answered: {answer}"""}
 
     else:
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a university exam question generator."},
                 {"role": "user", "content": f"""Generate 1 exam question on topic: {topic}

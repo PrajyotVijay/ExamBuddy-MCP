@@ -6,8 +6,11 @@ PROGRESS_FILE = r"C:\Projects\ExamBuddy-MCP\storage\progress.json"
 
 def _load_progress():
     if os.path.exists(PROGRESS_FILE):
-        with open(PROGRESS_FILE, "r") as f:
-            return json.load(f)
+        try:
+            with open(PROGRESS_FILE, "r") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, ValueError):
+            return {}
     return {}
 
 def _save_progress(progress):

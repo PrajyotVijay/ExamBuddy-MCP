@@ -4,6 +4,16 @@
       "subject": "Probability and Statistics",
       "completed": 1,
       "accuracy": 100
+    },
+    {
+      "subject": "DBMS",
+      "completed": 0,
+      "accuracy": 100
+    },
+    {
+      "subject": "ps_syllabus",
+      "completed": 0,
+      "accuracy": 0
     }
   ],
   "workspace_insights": []

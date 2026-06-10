@@ -10,7 +10,8 @@ def study_plan(days_available: int = 0, exam_focus: str = "all units", exam_date
     """Generate a day-by-day study plan. Optionally provide exam_date as DD-MM-YYYY to auto-calculate days remaining."""
     client = OpenAI(
         base_url="https://models.inference.ai.azure.com",
-        api_key=os.getenv("GITHUB_TOKEN")
+        api_key=os.getenv("GITHUB_TOKEN"),
+        timeout=30.0
     )
 
     if exam_date:
@@ -30,7 +31,7 @@ def study_plan(days_available: int = 0, exam_focus: str = "all units", exam_date
     context = _load_cache().get("content", "No syllabus loaded. Please run load_syllabus first.")
 
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "You are an expert academic study planner."},
             {"role": "user", "content": f"""Create a {days_available}-day study plan for a university exam.
