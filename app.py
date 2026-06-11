@@ -6,7 +6,9 @@ load_dotenv(r"C:\Projects\ExamBuddy-MCP\.env")
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = r"C:\Projects\ExamBuddy-MCP\storage"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "storage")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 HTML = '''
 <!DOCTYPE html>
@@ -38,15 +40,6 @@ label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
 .output h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #6c7086; margin-bottom: 16px; }
 .result { background: #1e1e2e; border-radius: 8px; padding: 16px; white-space: pre-wrap; font-size: 13px; line-height: 1.6; min-height: 300px; }
 .loading { color: #6c7086; font-style: italic; }
-.stat-row { display: flex; gap: 8px; margin-bottom: 12px; }
-.stat { background: #1e1e2e; border-radius: 8px; padding: 10px; flex: 1; text-align: center; }
-.stat .value { font-size: 22px; font-weight: bold; color: #89b4fa; }
-.stat .label { font-size: 10px; color: #6c7086; }
-.subject-badge { display: inline-block; padding: 3px 10px; background: #45475a; border-radius: 10px; font-size: 11px; margin: 2px; cursor: pointer; }
-.subject-badge.active { background: #89b4fa; color: #1e1e2e; font-weight: 600; }
-.tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-bottom: 4px; }
-.tag-correct { background: #a6e3a1; color: #1e1e2e; }
-.tag-incorrect { background: #f38ba8; color: #1e1e2e; }
 </style>
 </head>
 <body>
@@ -57,7 +50,6 @@ label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
 <div class="container">
   <div class="grid">
     <div class="sidebar">
-
       <div class="card">
         <h2>Load Syllabus</h2>
         <label>Subject Name</label>
@@ -66,7 +58,6 @@ label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
         <input type="file" id="syllabusFile" accept=".pdf">
         <button class="btn btn-primary" onclick="loadSyllabus()">Load Syllabus</button>
       </div>
-
       <div class="card">
         <h2>Study Plan</h2>
         <label>Exam Date (DD-MM-YYYY)</label>
@@ -75,7 +66,6 @@ label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
         <input type="text" id="examFocus" placeholder="e.g. all units">
         <button class="btn btn-green" onclick="getStudyPlan()">Generate Study Plan</button>
       </div>
-
       <div class="card">
         <h2>Tools</h2>
         <label>Topic</label>
@@ -93,25 +83,21 @@ label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
         <button class="btn btn-secondary" onclick="getDashboard()">View Dashboard</button>
         <button class="btn btn-secondary" onclick="getRecommendation()">Smart Recommendation</button>
       </div>
-
       <div class="card" id="quizAnswerCard" style="display:none">
         <h2>Submit Answer</h2>
         <textarea id="quizAnswer" rows="3" placeholder="Type your answer here..."></textarea>
         <button class="btn btn-green" onclick="submitAnswer()">Submit Answer</button>
       </div>
-
     </div>
-
     <div class="output">
       <h2>Output</h2>
       <div class="result" id="result">Welcome to ExamBuddy. Load a syllabus PDF to get started.</div>
     </div>
   </div>
 </div>
-
 <script>
 async function api(endpoint, data) {
-  document.getElementById('result').innerHTML = '<span class="loading">Processing...</span>';
+  document.getElementById('result').textContent = 'Processing...';
   const res = await fetch(endpoint, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -129,7 +115,7 @@ async function loadSyllabus() {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('subject_name', subject);
-  document.getElementById('result').innerHTML = '<span class="loading">Loading syllabus...</span>';
+  document.getElementById('result').textContent = 'Loading syllabus...';
   const res = await fetch('/load_syllabus', {method: 'POST', body: formData});
   const json = await res.json();
   document.getElementById('result').textContent = json.result || json.error;
@@ -237,4 +223,5 @@ def recommendation_route():
     return jsonify({'result': result})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=False, host="0.0.0.0", port=port)
