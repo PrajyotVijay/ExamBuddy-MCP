@@ -16,6 +16,9 @@ from tools.workiq import get_smart_recommendation
 from tools.webview_panel import open_dashboard
 mcp.tool()(open_dashboard)
 
+from tools.streak import get_streak
+mcp.tool()(get_streak)
+
 mcp.tool()(get_smart_recommendation)
 mcp.tool()(get_dashboard_data)
 

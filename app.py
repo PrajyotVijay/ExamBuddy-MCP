@@ -43,6 +43,14 @@ label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
 .loading { color: #6c7086; font-style: italic; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #45475a; border-top-color: #89b4fa; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; }
+  .container { padding: 0 12px; }
+  .header { padding: 16px 20px; }
+  .header span { display: none; }
+  .output { min-height: 300px; }
+  .result { min-height: 200px; }
+}
 </style>
 </head>
 <body>
@@ -113,6 +121,8 @@ label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
         <button class="btn btn-yellow" onclick="quizMe()">Quiz Me</button>
         <button class="btn btn-secondary" onclick="getDashboard()">View Dashboard</button>
         <button class="btn btn-secondary" onclick="getRecommendation()">Smart Recommendation</button>
+        <button class="btn btn-secondary" onclick="getStreak()">Study Streak</button>
+        <button class="btn btn-secondary" onclick="getAnalytics()">Performance Analytics</button>
       </div>
       <div class="card" id="quizAnswerCard" style="display:none">
         <h2>Submit Answer</h2>
@@ -126,6 +136,8 @@ label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
     </div>
   </div>
 </div>
+
+
 <script>
 async function api(endpoint, data) {
   document.getElementById('result').innerHTML = '<span class="loading"><span class="spinner"></span>Processing...</span>';
@@ -193,6 +205,14 @@ async function getDashboard() {
 async function getRecommendation() {
   await api('/recommendation', {});
 }
+
+async function getStreak() {
+  await api('/streak', {});
+}
+
+async function getAnalytics() {
+  await api('/analytics', {});
+}
 </script>
 </body>
 </html>
@@ -256,6 +276,60 @@ def dashboard_route():
 def recommendation_route():
     from tools.workiq import get_smart_recommendation
     result = get_smart_recommendation()
+    return jsonify({'result': result})
+
+@app.route('/streak', methods=['POST'])
+def streak_route():
+    from tools.streak import get_streak
+    result = get_streak()
+    return jsonify({'result': result})
+
+@app.route('/analytics', methods=['POST'])
+def analytics_route():
+    from tools.quiz import _load_scores
+    from tools.progress import _load_progress
+    from tools.syllabus import _load_cache
+    
+    scores = _load_scores()
+    cache = _load_cache()
+    progress = _load_progress()
+    active_subject = cache.get("active_subject", "General")
+    subject_progress = progress.get(active_subject, {})
+    completed = list(subject_progress.keys())
+    accuracy = round((scores["correct"] / scores["total"]) * 100) if scores["total"] > 0 else 0
+    
+    if scores["total"] < 2:
+        return jsonify({'result': f'Answer at least 2 quiz questions to see analytics.\n\nCurrent: {scores["total"]} questions attempted.'})
+    
+    # Find weak topics from history
+    topic_performance = {}
+    for item in scores["history"]:
+        q = item["question"][:40]
+        if q not in topic_performance:
+            topic_performance[q] = {"correct": 0, "total": 0}
+        topic_performance[q]["total"] += 1
+        if item["verdict"] == "Correct":
+            topic_performance[q]["correct"] += 1
+    
+    weak = [t for t, v in topic_performance.items() if v["correct"] == 0]
+    strong = [t for t, v in topic_performance.items() if v["correct"] == v["total"]]
+    
+    result = f"""PERFORMANCE ANALYTICS — {active_subject}
+
+Overall Accuracy: {accuracy}%
+Questions Attempted: {scores["total"]}
+Correct Answers: {scores["correct"]}
+Topics Completed: {len(completed)}
+
+STRONG AREAS:
+{chr(10).join(f'  + {t}...' for t in strong) if strong else '  Keep practicing to identify strong areas'}
+
+WEAK AREAS (needs attention):
+{chr(10).join(f'  - {t}...' for t in weak) if weak else '  No weak areas identified yet'}
+
+RECOMMENDATION:
+{"Focus on weak areas before exam." if weak else "Great performance! Keep practicing new topics."}"""
+    
     return jsonify({'result': result})
 
 if __name__ == '__main__':

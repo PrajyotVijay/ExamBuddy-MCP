@@ -2,6 +2,7 @@ import os, json
 from openai import OpenAI
 from dotenv import load_dotenv
 from tools.syllabus import _load_cache
+from tools.streak import update_streak
 
 load_dotenv(r"C:\Projects\ExamBuddy-MCP\.env")
 
@@ -72,6 +73,7 @@ Student answered: {answer}"""}
             "verdict": verdict
         })
         _save_scores(scores)
+        update_streak()
         _save_state({})
         # Auto mark topic as done if correct
         if verdict == "Correct":
