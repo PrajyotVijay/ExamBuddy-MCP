@@ -15,7 +15,8 @@ HTML = '''
 <html>
 <head>
 <meta charset="UTF-8">
-<title>ExamBuddy</title>
+<title>ExamBuddy — AI Study Assistant</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Segoe UI', sans-serif; background: #1e1e2e; color: #cdd6f4; min-height: 100vh; }
@@ -40,9 +41,39 @@ label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
 .output h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #6c7086; margin-bottom: 16px; }
 .result { background: #1e1e2e; border-radius: 8px; padding: 16px; white-space: pre-wrap; font-size: 13px; line-height: 1.6; min-height: 300px; }
 .loading { color: #6c7086; font-style: italic; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #45475a; border-top-color: #89b4fa; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
 </style>
 </head>
 <body>
+<div id="landing" style="display:block">
+  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px">
+    <h1 style="font-size:48px;color:#89b4fa;margin-bottom:12px">ExamBuddy</h1>
+    <p style="font-size:18px;color:#cdd6f4;margin-bottom:8px">Turn your syllabus PDF into a personal AI study assistant</p>
+    <p style="font-size:14px;color:#6c7086;margin-bottom:48px">Powered by GitHub Copilot + Work IQ — built for engineering students</p>
+    <div style="display:flex;gap:24px;margin-bottom:64px;flex-wrap:wrap;justify-content:center">
+      <div style="background:#313244;border-radius:12px;padding:24px;width:200px">
+        <div style="font-size:28px;font-weight:700;color:#89b4fa;margin-bottom:12px">01</div>
+        <div style="font-weight:600;margin-bottom:8px;color:#cdd6f4">Smart Study Plans</div>
+        <div style="font-size:13px;color:#6c7086">Day-by-day plans tailored to your syllabus and exam date</div>
+      </div>
+      <div style="background:#313244;border-radius:12px;padding:24px;width:200px">
+        <div style="font-size:28px;font-weight:700;color:#a6e3a1;margin-bottom:12px">02</div>
+        <div style="font-weight:600;margin-bottom:8px;color:#cdd6f4">Interactive Quiz</div>
+        <div style="font-size:13px;color:#6c7086">Practice with AI-generated questions and instant grading</div>
+      </div>
+      <div style="background:#313244;border-radius:12px;padding:24px;width:200px">
+        <div style="font-size:28px;font-weight:700;color:#f9e2af;margin-bottom:12px">03</div>
+        <div style="font-weight:600;margin-bottom:8px;color:#cdd6f4">Progress Dashboard</div>
+        <div style="font-size:13px;color:#6c7086">Track topics, quiz scores, and get smart recommendations</div>
+      </div>
+    </div>
+    <button onclick="document.getElementById('landing').style.display='none';document.getElementById('app').style.display='block'" style="background:#89b4fa;color:#1e1e2e;border:none;padding:16px 48px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer">Get Started</button>
+    <p style="margin-top:16px;font-size:12px;color:#6c7086">No signup required — just upload your syllabus PDF</p>
+  </div>
+</div>
+
+<div id="app" style="display:none">
 <div class="header">
   <h1>ExamBuddy</h1>
   <span>AI Study Assistant powered by GitHub Copilot + Work IQ</span>
@@ -97,7 +128,7 @@ label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
 </div>
 <script>
 async function api(endpoint, data) {
-  document.getElementById('result').textContent = 'Processing...';
+  document.getElementById('result').innerHTML = '<span class="loading"><span class="spinner"></span>Processing...</span>';
   const res = await fetch(endpoint, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -115,7 +146,7 @@ async function loadSyllabus() {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('subject_name', subject);
-  document.getElementById('result').textContent = 'Loading syllabus...';
+  document.getElementById('result').innerHTML = '<span class="loading"><span class="spinner"></span>Loading syllabus...</span>';
   const res = await fetch('/load_syllabus', {method: 'POST', body: formData});
   const json = await res.json();
   document.getElementById('result').textContent = json.result || json.error;
@@ -142,7 +173,8 @@ async function generateQuestions() {
 
 async function quizMe() {
   const topic = document.getElementById('topicInput').value || 'random';
-  const res = await api('/quiz_me', {topic});
+  const question_type = document.getElementById('questionType').value;
+  const res = await api('/quiz_me', {topic, question_type});
   if (res.result) document.getElementById('quizAnswerCard').style.display = 'block';
 }
 
@@ -207,7 +239,11 @@ def generate_questions_route():
 def quiz_me_route():
     from tools.quiz import quiz_me
     data = request.json
-    result = quiz_me(topic=data.get('topic','random'), answer=data.get('answer',''))
+    result = quiz_me(
+        topic=data.get('topic','random'),
+        answer=data.get('answer',''),
+        question_type=data.get('question_type','general')
+    )
     return jsonify({'result': result})
 
 @app.route('/dashboard', methods=['POST'])

@@ -34,7 +34,7 @@ def _save_scores(scores):
     with open(SCORE_FILE, "w") as f:
         json.dump(scores, f, indent=2)
 
-def quiz_me(topic: str = "random", answer: str = "") -> str:
+def quiz_me(topic: str = "random", answer: str = "", question_type: str = "general") -> str:
     """Interactive quiz — call with no answer to get a question, call with your answer to check it."""
     client = OpenAI(
         base_url="https://models.inference.ai.azure.com",
@@ -73,32 +73,59 @@ Student answered: {answer}"""}
         })
         _save_scores(scores)
         _save_state({})
+        # Auto mark topic as done if correct
+        if verdict == "Correct":
+            try:
+                from tools.progress import mark_topic_done
+                from tools.syllabus import _load_cache as get_cache
+                active_subject = get_cache().get("active_subject", "General")
+                mark_topic_done(f"Quiz session — {active_subject}", active_subject)
+            except:
+                pass
 
         accuracy = round((scores["correct"] / scores["total"]) * 100)
         return f"{result}\n\n---\nScore: {scores['correct']}/{scores['total']} ({accuracy}% accuracy)"
 
     else:
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a university exam question generator."},
-                {"role": "user", "content": f"""Generate 1 exam question on topic: {topic}
-Syllabus context: {context[:2000]}
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a university exam question generator. You MUST follow the exact format given by the user."},
+            {"role": "user", "content": f"""Generate 1 exam question on: {topic}
+    Context: {context[:1500]}
 
-Return ONLY in this exact format:
-QUESTION: <question text>
-ANSWER: <model answer>"""}
-            ],
-            max_tokens=300
-        )
-        raw = response.choices[0].message.content
+    IMPORTANT: Return ONLY the following format, nothing else:
+
+    QUESTION: [write question here]
+    A) [option 1]
+    B) [option 2]
+    C) [option 3]
+    D) [option 4]
+    ANSWER: [correct option letter and text]
+
+    Do not add any intro text. Start directly with QUESTION:""" if question_type == "mcq" else f"""Generate 1 descriptive exam question on: {topic}
+    Context: {context[:1500]}
+
+    Return ONLY:
+    QUESTION: [question text]
+    ANSWER: [model answer]"""}
+        ],
+        max_tokens=300
+    )
+    raw = response.choices[0].message.content.strip()
+
+    # Parse question and answer
+    q, a = "", ""
+    if "QUESTION:" in raw and "ANSWER:" in raw:
+        parts = raw.split("ANSWER:")
+        q = parts[0].replace("QUESTION:", "").strip()
+        a = parts[1].strip()
+    else:
         lines = raw.split("\n")
-        q, a = "", ""
-        for line in lines:
-            if line.startswith("QUESTION:"): q = line.replace("QUESTION:", "").strip()
-            if line.startswith("ANSWER:"): a = line.replace("ANSWER:", "").strip()
+        q = lines[0] if lines else raw
+        a = lines[-1] if len(lines) > 1 else ""
 
-        _save_state({"last_question": q, "last_answer": a})
+    _save_state({"last_question": q, "last_answer": a})
 
-        accuracy = round((scores["correct"] / scores["total"]) * 100) if scores["total"] > 0 else 0
-        return f"Question: {q}\n\nSession score: {scores['correct']}/{scores['total']} ({accuracy}% accuracy)"
+    accuracy = round((scores["correct"] / scores["total"]) * 100) if scores["total"] > 0 else 0
+    return f"Question: {q}\n\nSession score: {scores['correct']}/{scores['total']} ({accuracy}% accuracy)"

@@ -14,5 +14,9 @@
   "ps_syllabus": {
     "path": "C:\\Projects\\ExamBuddy-MCP\\storage\\ps_syllabus.pdf",
     "pages": 4
+  },
+  "dbms_syllabus": {
+    "path": "C:\\Projects\\ExamBuddy-MCP\\storage\\dbms_syllabus.pdf",
+    "pages": 2
   }
 }
