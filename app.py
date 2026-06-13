@@ -84,7 +84,7 @@ label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
 <div id="app" style="display:none">
 <div class="header">
   <h1>ExamBuddy</h1>
-  <span>AI Study Assistant powered by GitHub Copilot + Work IQ</span>
+  <span id="activeSubject">AI Study Assistant powered by GitHub Copilot + Work IQ</span>
 </div>
 <div class="container">
   <div class="grid">
@@ -131,7 +131,7 @@ label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
       </div>
     </div>
     <div class="output">
-      <h2>Output</h2>
+      <h2 id="outputTitle">Output</h2>
       <div class="result" id="result">Welcome to ExamBuddy. Load a syllabus PDF to get started.</div>
     </div>
   </div>
@@ -140,6 +140,7 @@ label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
 
 <script>
 async function api(endpoint, data) {
+  document.getElementById('outputTitle').textContent = 'Processing...';
   document.getElementById('result').innerHTML = '<span class="loading"><span class="spinner"></span>Processing...</span>';
   const res = await fetch(endpoint, {
     method: 'POST',
@@ -148,6 +149,7 @@ async function api(endpoint, data) {
   });
   const json = await res.json();
   document.getElementById('result').textContent = json.result || json.error;
+  document.getElementById('outputTitle').textContent = 'Output';
   return json;
 }
 
@@ -162,6 +164,7 @@ async function loadSyllabus() {
   const res = await fetch('/load_syllabus', {method: 'POST', body: formData});
   const json = await res.json();
   document.getElementById('result').textContent = json.result || json.error;
+  document.getElementById('activeSubject').textContent = 'Active subject: ' + subject;
 }
 
 async function getStudyPlan() {

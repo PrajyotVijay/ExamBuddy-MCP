@@ -45,8 +45,8 @@ def load_syllabus(pdf_path: str, subject_name: str = "") -> str:
     # Set as active subject
     _save_cache(text, pdf_path, subject)
 
-    preview = text[:500] + "..." if len(text) > 500 else text
-    return f"Syllabus loaded — Subject: {subject} ({len(reader.pages)} pages)\n\nPreview:\n{preview}"
+    preview = text[:200] + "..." if len(text) > 200 else text
+    return f"Syllabus loaded successfully!\n\nSubject: {subject}\nPages: {len(reader.pages)}\nPreview: {preview}"
 
 def switch_subject(subject_name: str) -> str:
     """Switch the active subject to a previously loaded syllabus."""
