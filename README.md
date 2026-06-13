@@ -2,7 +2,8 @@
 
 ExamBuddy turns any university syllabus PDF into a personal AI-powered study assistant. Built as both a web application and a VS Code MCP server, it integrates with GitHub Copilot and uses Work IQ to deliver intelligent, context-aware study support.
 
-> **Live Demo:** [exambuddy-mcp.onrender.com](https://exambuddy-mcp.onrender.com) | **Repo:** [PrajyotVijay/ExamBuddy-MCP](https://github.com/PrajyotVijay/ExamBuddy-MCP)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-exambuddy--mcp.onrender.com-blue)](https://exambuddy-mcp.onrender.com)
+[![GitHub](https://img.shields.io/badge/GitHub-PrajyotVijay%2FExamBuddy--MCP-black)](https://github.com/PrajyotVijay/ExamBuddy-MCP)
 ---
 
 ## The Problem
