@@ -47,23 +47,17 @@ ExamBuddy reads your syllabus and becomes your personal study assistant. Load yo
 
 ## How It Works
 
+```
 Student uploads syllabus PDF
-
-↓
-
+         ↓
 ExamBuddy parses and indexes content
-
-↓
-
+         ↓
 Work IQ builds session context from progress + quiz history
-
-↓
-
+         ↓
 AI tools deliver personalized study assistance
-
-↓
-
+         ↓
 Dashboard shows complete study intelligence
+```
 
 ---
 
