@@ -1,6 +1,13 @@
+import markdown
 from flask import Flask, request, jsonify, render_template_string
 from dotenv import load_dotenv
 import os, json
+
+
+def render_result(result):
+    html = markdown.markdown(result, extensions=['extra'])
+    return jsonify({'result': result, 'html': html})
+
 
 load_dotenv(r"C:\Projects\ExamBuddy-MCP\.env")
 
@@ -39,7 +46,7 @@ input[type="file"] { padding: 6px; }
 label { font-size: 12px; color: #6c7086; display: block; margin-bottom: 4px; }
 .output { background: #313244; border-radius: 12px; padding: 24px; min-height: 400px; }
 .output h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #6c7086; margin-bottom: 16px; }
-.result { background: #1e1e2e; border-radius: 8px; padding: 16px; white-space: pre-wrap; font-size: 13px; line-height: 1.6; min-height: 300px; }
+.result { background: #1e1e2e; border-radius: 8px; padding: 16px; font-size: 13px; line-height: 1.8; min-height: 300px; word-wrap: break-word; }
 .loading { color: #6c7086; font-style: italic; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #45475a; border-top-color: #89b4fa; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
@@ -148,7 +155,7 @@ async function api(endpoint, data) {
     body: JSON.stringify(data)
   });
   const json = await res.json();
-  document.getElementById('result').textContent = json.result || json.error;
+  document.getElementById('result').innerHTML = json.html || json.result || json.error;
   document.getElementById('outputTitle').textContent = 'Output';
   return json;
 }
@@ -235,28 +242,28 @@ def load_syllabus_route():
     path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(path)
     result = load_syllabus(path, subject_name)
-    return jsonify({'result': result})
+    return render_result(result)
 
 @app.route('/study_plan', methods=['POST'])
 def study_plan_route():
     from tools.planner import study_plan
     data = request.json
     result = study_plan(exam_date=data.get('exam_date',''), exam_focus=data.get('exam_focus','all units'))
-    return jsonify({'result': result})
+    return render_result(result)
 
 @app.route('/explain_topic', methods=['POST'])
 def explain_topic_route():
     from tools.explain import explain_topic
     data = request.json
     result = explain_topic(data.get('topic',''))
-    return jsonify({'result': result})
+    return render_result(result)
 
 @app.route('/generate_questions', methods=['POST'])
 def generate_questions_route():
     from tools.questions import generate_questions
     data = request.json
     result = generate_questions(data.get('topic',''), question_type=data.get('question_type','mixed'))
-    return jsonify({'result': result})
+    return render_result(result)
 
 @app.route('/quiz_me', methods=['POST'])
 def quiz_me_route():
@@ -267,25 +274,25 @@ def quiz_me_route():
         answer=data.get('answer',''),
         question_type=data.get('question_type','general')
     )
-    return jsonify({'result': result})
+    return render_result(result)
 
 @app.route('/dashboard', methods=['POST'])
 def dashboard_route():
     from tools.webview import get_dashboard_data
     result = get_dashboard_data()
-    return jsonify({'result': result})
+    return render_result(result)
 
 @app.route('/recommendation', methods=['POST'])
 def recommendation_route():
     from tools.workiq import get_smart_recommendation
     result = get_smart_recommendation()
-    return jsonify({'result': result})
+    return render_result(result)
 
 @app.route('/streak', methods=['POST'])
 def streak_route():
     from tools.streak import get_streak
     result = get_streak()
-    return jsonify({'result': result})
+    return render_result(result)
 
 @app.route('/analytics', methods=['POST'])
 def analytics_route():
@@ -333,7 +340,7 @@ WEAK AREAS (needs attention):
 RECOMMENDATION:
 {"Focus on weak areas before exam." if weak else "Great performance! Keep practicing new topics."}"""
     
-    return jsonify({'result': result})
+    return render_result(result)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
