@@ -170,7 +170,7 @@ async function loadSyllabus() {
   document.getElementById('result').innerHTML = '<span class="loading"><span class="spinner"></span>Loading syllabus...</span>';
   const res = await fetch('/load_syllabus', {method: 'POST', body: formData});
   const json = await res.json();
-  document.getElementById('result').textContent = json.result || json.error;
+  document.getElementById('result').innerHTML = json.html || json.result || json.error;
   document.getElementById('activeSubject').textContent = 'Active subject: ' + subject;
 }
 
